@@ -1,0 +1,62 @@
+/* eslint-disable prettier/prettier */
+import React, { forwardRef, useState } from 'react'
+import { Text, TouchableOpacity } from 'react-native'
+
+import { useTheme } from '../../contexts/theme'
+
+export enum ButtonType {
+  Critical,
+  Primary,
+  Secondary,
+  SplashLoginRegister,
+}
+
+export interface ButtonProps {
+  title: string
+  buttonType: ButtonType
+  accessibilityLabel?: string
+  testID?: string
+  onPress?: () => void
+  disabled?: boolean
+}
+
+export const Button: React.FC<ButtonProps & React.RefAttributes<HTMLInputElement | undefined>> = forwardRef(
+  ({ title, buttonType, accessibilityLabel, testID, onPress, disabled = false }, ref: any) => {
+    const accessible = accessibilityLabel && accessibilityLabel !== '' ? true : false
+    const { Buttons, heavyOpacity } = useTheme()
+    const buttonStyles = {
+      [ButtonType.Primary]: { color: Buttons.primary, text: Buttons.primaryText },
+      [ButtonType.Secondary]: { color: Buttons.secondary, text: Buttons.secondaryText },
+      [ButtonType.Critical]: { color: Buttons.critical, text: Buttons.primaryText },
+      [ButtonType.SplashLoginRegister]: { color: Buttons.splashLoginRegister, text: Buttons.splashLoginRegisterText },
+    }
+
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        accessible={accessible}
+        accessibilityLabel={accessibilityLabel}
+        testID={testID}
+        style={[
+          buttonStyles[buttonType].color,
+          disabled && (buttonType === ButtonType.Primary ? Buttons.primaryDisabled : Buttons.secondaryDisabled),
+        ]}
+        disabled={disabled}
+        activeOpacity={heavyOpacity}
+        ref={ref}
+      >
+        <Text
+          style={[
+            buttonStyles[buttonType].text,
+            disabled &&
+              (buttonType === ButtonType.Primary ? Buttons.primaryTextDisabled : Buttons.secondaryTextDisabled),
+          ]}
+        >
+          {title}
+        </Text>
+      </TouchableOpacity>
+    )
+  }
+)
+
+export default Button
